@@ -1,49 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objs as go
-
-
-st.sidebar.header("Opções do Dataset")
 
 data = pd.read_csv("injury_data.csv")
 
-if st.sidebar.checkbox('Show dataframe',value=True):
-    st.title("Dataset:")
-    st.write("O dataset escolhido foi encontrado na plataforma Kaggle e ele refere-se a um conjunto de dados projetado especificamente para a previsão de lesões em jogadores de futebol a partir de alguns atributos que serão mostrados neste trabralho.")
-    with st.expander("Tabela", expanded=True, icon=":material/table:"):
-        showData = st.multiselect('Filtro: ',data.columns, default=data.columns.tolist())
-        st.write(data[showData])
-    st.markdown("----------")
-
-st.sidebar.header("Opções de Estastísticas")
-atributo_stats = st.sidebar.selectbox(
-    "Escolha o tipo de gráfico:",
-    ("Idade", "Altura", "Peso", "Intensidade")
-)
-df = pd.DataFrame()
-df["Idade"] = data["Player_Age"]
-df["Altura"] = data["Player_Height"]
-df["Peso"] = data["Player_Weight"]
-df["Intensidade"] = data["Training_Intensity"]
-
-st.title("Estatíticas: "+atributo_stats)
-left,center,right = st.columns(3,gap="large")
-with left:
-    st.info("Média:")
-    st.metric(label="",value=f"{df[atributo_stats].describe()[1]:,.3f}",label_visibility="collapsed")
-    st.info("Valor mínimo:")
-    st.metric(label="",value=f"{df[atributo_stats].describe()[3]:,.3f}",label_visibility="collapsed")
-
-with center:
-    st.info("Desvio Padrão:")
-    st.metric(label="",value=f"{df[atributo_stats].describe()[2]:,.3f}",label_visibility="collapsed")
-    st.info("Valor máximo:")
-    st.metric(label="",value=f"{df[atributo_stats].describe()[7]:,.3f}",label_visibility="collapsed")
-with right:
-    st.info("Mediana:")
-    st.metric(label="",value=f"{df[atributo_stats].describe()[5]:,.3f}",label_visibility="collapsed")
-st.markdown("----------")
 st.sidebar.header("Opções de Gráficos")
 tipo_grafico = st.sidebar.selectbox(
     "Escolha o tipo de gráfico:",
@@ -72,7 +32,7 @@ histograms = {
 
 boxplots = {
     'Idade': go.Box(
-        y=data['Player_Age']
+        y=data['Player_Age'],
     ),
     'Peso': go.Box(
         y=data['Player_Weight']
@@ -164,7 +124,6 @@ def gerar_grafico(tipo):
             'x': 0.5,
             'xanchor': 'center' 
             },
-            xaxis_title_text='Idade',
             yaxis_title_text='Frequência',
             updatemenus=[
                 dict(
@@ -176,25 +135,21 @@ def gerar_grafico(tipo):
                             method="update",
                             args=[{"visible": [True, False, False, False]},
                                 {"title": "Distribuição da Idade do Jogador",
-                                    "xaxis": {"title": "Idade"},
                                     "yaxis": {"title": "Frequência"}}]),
                         dict(label="Peso",
                             method="update",
                             args=[{"visible": [False, True, False, False]},
                                 {"title": "Distribuição do Peso do Jogador",
-                                    "xaxis": {"title": "Peso (kg)"},
                                     "yaxis": {"title": "Frequência"}}]),
                         dict(label="Altura",
                             method="update",
                             args=[{"visible": [False, False, True, False]},
                                 {"title": "Distribuição da Altura do Jogador",
-                                    "xaxis": {"title": "Altura (cm)"},
                                     "yaxis": {"title": "Frequência"}}]),
                         dict(label="Intensidade",
                             method="update",
                             args=[{"visible": [False, False, False, True]},
                                 {"title": "Distribuição da Intensidade de Treinamento",
-                                    "xaxis": {"title": "Intensidade de Treinamento"},
                                     "yaxis": {"title": "Frequência"}}])
                     ]
                 )
@@ -238,6 +193,6 @@ def gerar_grafico(tipo):
 
 grafico = gerar_grafico(tipo_grafico)
 
-st.title("Gráficos:")
+st.title(":material/bar_chart: Gráficos:")
 
 st.plotly_chart(grafico)
