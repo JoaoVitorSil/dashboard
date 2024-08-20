@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-import time
-import numpy as np
 
 data = pd.read_csv("injury_data.csv")
 
